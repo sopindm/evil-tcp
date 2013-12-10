@@ -1,28 +1,12 @@
 package net.devilin.evil_tcp;
 
-public class Client
+import java.io.IOException;
+import java.net.UnknownHostException;
+
+public class Client extends Socket
 {
-    public Client(String host, int port) 
+    public Client(String host, int port) throws UnknownHostException, IOException
     {
-        this.host = host;
-        this.port = port;
+        super(new java.net.Socket(host, port));
     }
-
-    @Override
-    protected void finalize()
-    {
-    }
-
-    public String read()
-    {
-        return "";
-    }
-
-    public String write()
-    {
-        return "";
-    }
-
-    private String host;
-    private int port;
 }
