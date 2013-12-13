@@ -1,7 +1,7 @@
 package net.devilin.evil_tcp;
 
+import java.lang.*;
 import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.InputStream;
@@ -15,14 +15,15 @@ class Socket implements AutoCloseable
     {
         this.socket = socket;
 
+        socket.setTcpNoDelay(true);
+
         InputStream input = socket.getInputStream();
         OutputStream output = socket.getOutputStream();
 
-        input = new DataInputStream(input);
-        output = new DataOutputStream(output);
+        this.input = new DataInputStream(input);
+        this.output = new DataOutputStream(output);
 
         reader = new InputStreamReader(input);
-        writer = new OutputStreamWriter(output);
     }
 
     @Override
@@ -38,12 +39,6 @@ class Socket implements AutoCloseable
     private DataOutputStream output;
 
     private InputStreamReader reader;
-    private OutputStreamWriter writer;
-
-    public boolean isClosed() 
-    {
-        throw new UnsupportedOperationException("Not implemented");
-    }
 
     public String read() throws IOException
     {
@@ -51,12 +46,13 @@ class Socket implements AutoCloseable
         char[] chars = new char[size];
 
         int read = reader.read(chars);
+
         return new String(chars);
     }
 
     public void write(String data) throws IOException
     {
         output.writeInt(data.length());
-        writer.write(data);
+        output.write(data.getBytes());
     }
 }

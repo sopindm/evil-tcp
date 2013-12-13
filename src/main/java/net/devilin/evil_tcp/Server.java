@@ -1,18 +1,25 @@
 package net.devilin.evil_tcp;
 
+import java.io.IOException;
+import java.net.ServerSocket;
+
 class Server implements AutoCloseable
 {
-    public Server(int port)
+    public Server(int port) throws IOException
     {
+        socket = new ServerSocket(port);
     }
 
-    public Socket accept()
+    private ServerSocket socket;
+
+    public Socket accept() throws IOException
     {
-        throw new UnsupportedOperationException("Not implemented");
+        return new Socket(socket.accept());
     }
 
     @Override
-    public void close()
+    public void close() throws IOException
     {
+        socket.close();
     }
 }

@@ -1,8 +1,9 @@
 package net.devilin.evil_tcp;
 
+import java.io.EOFException;
 import java.io.IOException;
 
-class ConnectionHandler 
+class ConnectionHandler implements Runnable
 {
     public ConnectionHandler(Socket s) 
     {
@@ -11,11 +12,24 @@ class ConnectionHandler
 
     private Socket socket;
 
-    public void run() throws IOException
+    @Override
+    public void run()
     {
-        while(!socket.isClosed()) {
-            String s = socket.read();
-            socket.write("Answer on " + s);
+        try {
+            try {
+                for(;;) {
+                    String s = socket.read();
+                    socket.write("Answer on " + s);
+                }
+            }
+            catch(EOFException e) {
+            }
+            finally {
+                socket.close();
+            }
+        }
+        catch(IOException e) {
+            e.printStackTrace();
         }
     }
 }
@@ -27,8 +41,8 @@ public class App
         try(Server server = new Server(8080)) {
                 for(;;) {
                     Socket s = server.accept();
-
-                    new ConnectionHandler(s).run();
+                    
+                    new Thread(new ConnectionHandler(s)).start();
                 }
             }
         catch(Exception e) {
